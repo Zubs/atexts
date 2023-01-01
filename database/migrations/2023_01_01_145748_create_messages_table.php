@@ -18,6 +18,7 @@ return new class extends Migration
             $table->uuid('sender_id')->nullable();
             $table->uuid('recipient_id');
             $table->text('body');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

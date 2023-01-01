@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\RegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +18,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::group([
+    'prefix' => 'auth',
+    'as' => 'auth.',
+], function () {
+    Route::post('/register', RegistrationController::class)->name('register');
+});
+
+Route::group([
+    'prefix' => 'messages',
+    'as' => 'messages.',
+//    'middleware' => 'auth:sanctum',
+], function () {
+    Route::get('/', [MessagesController::class, 'index'])->name('index');
+    Route::post('/', [MessagesController::class, 'store'])->name('store');
+    Route::get('/{message}', [MessagesController::class, 'show'])->name('show');
 });
