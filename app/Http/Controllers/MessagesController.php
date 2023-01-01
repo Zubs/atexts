@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MessageResource;
 use App\Models\Message;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\Sanctum;
 
 class MessagesController extends Controller
 {
@@ -27,15 +29,35 @@ class MessagesController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'sender_id' => ['uuid', 'exists:users,id'],
-            'recipient_id' => ['required', 'uuid', 'exists:users,id'],
-            'body' => ['required', 'string'],
-        ]);
+        try {
+            $data = $request->validate([
+                'sender_id' => ['uuid', 'exists:users,id'],
+                'recipient_id' => ['required', 'uuid', 'exists:users,id'],
+                'body' => ['required', 'string'],
+            ]);
 
-        $message = Auth::user()->messages()->create($data);
+            $token = explode(" ", $request->headers->get('Authorization'))[1] ?? null;
 
-        return new MessageResource($message);
+            if ($token) {
+                $user = Sanctum::personalAccessTokenModel()::findToken($token)->tokenable;
+
+                if (
+                    array_key_exists('sender_id', $data) &&
+                    $user->id !== $data['sender_id']
+                ) throw new Exception('You are not authorized to send messages on behalf of this user.');
+
+                $data['sender_id'] = $user->id;
+            }
+
+            $message = Message::create($data);
+
+            return new MessageResource($message);
+        } catch (Exception $exception) {
+            return response()->json([
+                'data' => null,
+                'errors' => $exception->getMessage()
+            ]);
+        }
     }
 
     /**

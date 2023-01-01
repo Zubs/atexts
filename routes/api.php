@@ -30,9 +30,10 @@ Route::group([
 Route::group([
     'prefix' => 'messages',
     'as' => 'messages.',
-//    'middleware' => 'auth:sanctum',
+    'middleware' => 'auth:sanctum',
 ], function () {
     Route::get('/', [MessagesController::class, 'index'])->name('index');
-    Route::post('/', [MessagesController::class, 'store'])->name('store');
     Route::get('/{message}', [MessagesController::class, 'show'])->name('show');
 });
+
+Route::post('messages', [MessagesController::class, 'store'])->name('messages.store');

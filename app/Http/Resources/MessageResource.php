@@ -19,13 +19,4 @@ class MessageResource extends JsonResource
             'error' => null
         ];
     }
-
-    public function with($request): array
-    {
-        return [
-            'author' => 'Zubair Idris Aweda',
-            'verion' => env('APP_VERSION', '1.0.0'),
-            'author_url' => url('https://www.github.com/Zubs')
-        ];
-    }
 }
