@@ -18,7 +18,10 @@ class MessagesController extends Controller
      */
     public function index()
     {
-        return MessageResource::collection(Auth::user()->messages);
+        return response()->json([
+            'data' => Auth::user()->messages,
+            'error' => null
+        ]);
     }
 
     /**
