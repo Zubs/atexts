@@ -71,44 +71,20 @@ class MessagesController extends Controller
      */
     public function show($id)
     {
-//        $message = Auth::user()->messages()->findOrFail($id);
         try {
             $message = Message::find($id);
 
             if ($message) return new MessageResource($message);
             else return response()->json([
-                'error' => 'Unable to fetch message',
+                'error' => 'Message Not Found',
                 'data' => null
             ]);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return response()->json([
-                'error' => 'Unable to fetch message',
+                'error' => $exception->getMessage(),
                 'data' => null
             ]);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
